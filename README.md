@@ -1,77 +1,219 @@
-# Atomic Search Sample (vanilla + Vite)
+Pokédex Discovery — Coveo Technical Challenge
 
-> **Scaffold template**: `atomic-search-vite`
-> A search interface built with [`@coveo/atomic`](https://docs.coveo.com/en/atomic/latest/) web components in plain HTML/JS, bundled with [Vite](https://vitejs.dev/). It runs against the public `searchuisamples` organization (the `BarcaKnowledge` knowledge base) with no configuration required.
+A Coveo-powered search experience for discovering Pokémon by name, type, generation, and relevance.
 
-It shows how little code is needed to stand up a full Atomic search page: the
-experience is declared as markup in `index.html`, and a small entry script
-registers the components and points them at the sample organization.
+This project was built for the Coveo Forward Deployed Engineer technical challenge using Coveo Atomic, Coveo Headless, and Vite. The goal was to take content indexed from PokémonDB and turn it into a clean, intuitive search experience using Coveo's search and relevance platform.
 
-## What it shows
+Live Demo
 
-- A search box with query suggestions and instant results
-- The same facets as the Headless search samples, managed by an
-  `atomic-facet-manager`: a hierarchical **Category** facet (`ec_category`) plus
-  **Article type**, **Robot series**, **Difficulty**, and **Author**
-- A breadbox, query summary, and a sort dropdown (Relevance / Newest / Oldest)
-- A result list with a basic result template (`atomic-result-link`, excerpt)
-- Numbered pagination
+Pokédex Discovery:
+https://defsnowleopard.github.io/pokemon-coveo-search/
 
-## Technology stack
+What I Built
 
-- **@coveo/atomic**: Coveo's web-component library
-- **@coveo/headless**: provides the sample engine configuration
-- **Vite**: dev server and build
-- **Playwright**: end-to-end tests
+The application provides a search experience specifically designed around Pokémon data.
 
-## Getting started
+Users can:
 
-```sh
-pnpm install
-pnpm dev      # start the dev server (opens the browser)
-pnpm build    # production build
-pnpm preview  # preview the production build (http://localhost:4173)
-pnpm e2e      # end-to-end tests (Playwright)
-```
+Search the Pokédex using Coveo-powered search
+View query suggestions and instant results
+Filter Pokémon by Type
+Filter Pokémon by Generation
+Sort results by Best Match, A–Z, or Z–A
+View Pokémon images directly in search results
+See Pokémon type and generation metadata
+Navigate paginated results
 
-## How it works
+The interface was customized from the Coveo Atomic framework into a Pokémon-specific discovery experience rather than using the default Atomic sample interface.
 
-- `index.html` declares the experience with Atomic layout + components.
-- `src/main.js` calls `defineCustomElements()` (from `@coveo/atomic/loader`),
-  imports the Coveo theme, then builds a Headless search engine with
-  `getSampleSearchEngineConfiguration()` scoped to the `BarcaKnowledge` search
-  hub (via `search.searchHub`) and hands it to the interface with
-  `initializeWithSearchEngine(engine)` before running the first search.
-- `vite.config.js` copies Atomic's runtime `lang/` and `assets/` folders out of
-  the installed package into `public/`, because Atomic fetches them from `/lang`
-  and `/assets` at runtime.
+Coveo Implementation
+Content Source
 
-## Using this sample as an MRE
+Pokémon content is indexed in Coveo from PokémonDB.
 
-This sample doubles as a minimal reproducible example for troubleshooting.
+The search interface is restricted to the Pokémon source:
 
-- **Where to change the configuration**: `src/main.js`. It uses
-  `getSampleSearchEngineConfiguration()` (public sample credentials). To
-  reproduce your own issue, replace it with your `organizationId`,
-  `accessToken`, and (if needed) a `search.searchHub`/`pipeline`.
-- **Safe to modify**: `src/main.js` (configuration) and the Atomic markup in
-  `index.html` to reproduce a specific UI scenario.
-- **Scaffolding you can usually ignore**: `vite.config.js`,
-  `playwright.config.ts`, and `e2e/`.
-- **Credentials**: the sample configuration targets the **public
-  `searchuisamples` organization**, safe to share with customers or partners. It
-  is not internal credentials.
+engine.dispatch(
+  loadAdvancedSearchQueryActions(engine).updateAdvancedSearchQueries({
+    aq: '@source==("PokemonDB-Pokedex2")',
+  })
+);
 
-## Reproducing against a specific version
+This ensures that the interface only returns content from the intended Pokémon dataset.
 
-To reproduce an issue against a specific Coveo UI Kit version, install it after
-scaffolding:
+Custom Fields
 
-```sh
-npm install @coveo/atomic@<version>
-```
+I created and exposed Pokémon-specific metadata for use in the search experience:
 
-## Learn more
+pokemon_image
+pokemon_type
+pokemon_generation
 
-- [Coveo Atomic documentation](https://docs.coveo.com/en/atomic/latest/)
-- [Atomic component reference](https://docs.coveo.com/en/atomic/latest/reference/)
+These fields support the result cards, filtering experience, and visual presentation of the indexed content.
+
+The fields are registered with the search engine before the initial search executes:
+
+engine.dispatch(
+  fieldActions.registerFieldsToInclude([
+    'pokemon_image',
+    'pokemon_type',
+    'pokemon_generation',
+  ])
+);
+Search Experience
+Type Facet
+
+Users can refine results using the Pokémon type field.
+
+<atomic-facet
+  field="pokemon_type"
+  label="Type">
+</atomic-facet>
+Generation Facet
+
+Generation is implemented as a numeric facet with ranges corresponding to Pokémon generations.
+
+<atomic-numeric-facet
+  field="pokemon_generation"
+  label="Generation">
+</atomic-numeric-facet>
+
+This allows users to move from a broad search experience into more targeted discovery.
+
+Sorting
+
+The interface provides three sorting options:
+
+Best Match
+A–Z
+Z–A
+
+Relevance remains the default so Coveo determines the most appropriate results for the query before a user explicitly changes the sort order.
+
+Search Architecture
+
+The project follows a straightforward Coveo search flow:
+
+PokémonDB
+    ↓
+Coveo Source
+    ↓
+Coveo Index
+    ↓
+Custom Pokémon Fields
+    ↓
+Search Hub / Query Processing
+    ↓
+Coveo Headless Search Engine
+    ↓
+Atomic Components
+    ↓
+Pokédex Discovery UI
+
+The application builds a Coveo Headless search engine and then passes that engine to the Atomic search interface.
+
+const engine = buildSearchEngine({
+  configuration: {
+    organizationId: 'katpokemonchallengecezvmacy',
+    accessToken: 'SEARCH_TOKEN',
+    search: {
+      searchHub: 'PokemonSearch',
+    },
+  },
+});
+
+await searchInterface.initializeWithSearchEngine(engine);
+
+This separation lets Headless manage search state and communication with Coveo while Atomic provides the UI components.
+
+Technology
+Coveo Cloud Platform — indexing and search
+Coveo Atomic — search UI components
+Coveo Headless — search engine and state management
+JavaScript
+HTML
+CSS
+Vite
+GitHub Pages
+Project Structure
+pokemon-coveo-search/
+│
+├── index.html
+│   └── Atomic search interface, facets, results, and sorting
+│
+├── src/
+│   ├── main.js
+│   │   └── Coveo engine configuration and search behavior
+│   │
+│   └── style.css
+│       └── Custom Pokédex interface styling
+│
+├── public/
+│   └── Static assets and imagery
+│
+├── vite.config.js
+│   └── Vite and Atomic asset configuration
+│
+├── package.json
+└── README.md
+Running Locally
+
+Clone the repository:
+
+git clone https://github.com/defsnowleopard/pokemon-coveo-search.git
+
+Move into the project:
+
+cd pokemon-coveo-search
+
+Install dependencies:
+
+npm install
+
+Start the development server:
+
+npm run dev
+
+Create a production build:
+
+npm run build
+Design Decisions
+
+For this challenge, I wanted the search experience to feel like a lightweight Pokédex rather than a generic enterprise search page.
+
+I focused on a few areas that would make the indexed data genuinely useful to a user:
+
+Structured metadata
+Type and generation became searchable/filterable fields instead of remaining information buried within the page content.
+
+Discovery as well as direct search
+A user does not need to know exactly which Pokémon they want. Facets allow them to explore the dataset by characteristics such as type or generation.
+
+Relevance first
+Coveo relevance is the default sorting behavior, with alphabetical sorting available when the user wants more deterministic browsing.
+
+Visual results
+Pokémon imagery and metadata are surfaced directly in the result cards so users can identify results quickly without opening every page.
+
+Source control
+The search interface explicitly limits results to the Pokémon source rather than relying on the organization containing only one relevant dataset.
+
+Scope
+
+I prioritized completing the core search experience cleanly and making the implementation easy to understand and demonstrate.
+
+The project focuses on the essential challenge requirements: indexing searchable content, configuring Coveo, building the Atomic interface, exposing useful metadata, implementing facets and sorting, and presenting the result as a usable search experience.
+
+Given additional development time, areas I would explore next include:
+
+More sophisticated query pipeline rules
+Additional Pokémon metadata and facets
+Search analytics and behavioral tuning
+Recommendation or related-Pokémon experiences
+Generative answering over appropriate Pokémon content
+Additional responsive and accessibility testing
+About the Project
+
+Built by Kat Litton as part of the Coveo Forward Deployed Engineer technical challenge.
+
+The part of this project I found most interesting was not simply building the interface, but deciding how the underlying content should be structured so Coveo could turn it into a useful discovery experience.

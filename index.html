@@ -3,125 +3,475 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/src/style.css" />
-    <title>Atomic Search Sample</title>
+
+    <title>Pokédex Discovery | Coveo</title>
   </head>
+
   <body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
     <header class="app-header">
-      <div class="brand">
-        <img src="/coveo-logo.svg" alt="Coveo" width="119" height="30" />
-        <h1>Atomic Search + Vite</h1>
+      <div class="header-inner">
+
+        <div class="header-brand">
+
+          <div class="logo-lockup">
+            <img
+              class="coveo-logo"
+              src="/coveo-logo.svg"
+              alt="Coveo"
+            />
+
+            <span class="logo-divider"></span>
+
+            <img
+              class="pokemon-logo"
+              src="/pokemon-logo.png"
+              alt="Pokémon"
+            />
+          </div>
+
+          <div class="header-copy">
+            <div class="eyebrow">
+              COVEO TECHNICAL CHALLENGE
+            </div>
+
+            <h1>Pokédex Discovery</h1>
+
+            <p>
+              A Coveo-powered search experience for exploring Pokémon
+              by type, generation, and relevance.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="author-card">
+          <span class="author-label">BUILT BY</span>
+          <strong>Kat</strong>
+          <span>Forward Deployed Engineer Challenge</span>
+        </div>
+
       </div>
     </header>
 
-    <atomic-search-interface>
-      <atomic-search-layout>
-        <atomic-layout-section section="search">
-          <atomic-search-box>
-            <atomic-search-box-recent-queries></atomic-search-box-recent-queries>
-            <atomic-search-box-query-suggestions></atomic-search-box-query-suggestions>
-            <atomic-search-box-instant-results image-size="small">
-              <atomic-result-template>
-                <template>
-                  <atomic-result-section-title>
-                    <atomic-result-link></atomic-result-link>
-                  </atomic-result-section-title>
-                  <atomic-result-section-excerpt>
-                    <atomic-result-text field="excerpt"></atomic-result-text>
-                  </atomic-result-section-excerpt>
-                </template>
-              </atomic-result-template>
-            </atomic-search-box-instant-results>
-          </atomic-search-box>
-        </atomic-layout-section>
 
-        <atomic-layout-section section="facets">
-  <atomic-facet-manager>
+    <!-- =====================================================
+         SEARCH EXPERIENCE
+    ====================================================== -->
+    <main class="search-shell">
 
-    <atomic-facet
-      field="pokemon_type"
-      label="Type">
-    </atomic-facet>
+      <atomic-search-interface
+        fields-to-include='[
+          "pokemon_image",
+          "pokemon_type",
+          "pokemon_generation"
+        ]'
+      >
 
-    <atomic-numeric-facet
-      field="pokemon_generation"
-      label="Generation">
-    </atomic-numeric-facet>
+        <atomic-search-layout>
 
-  </atomic-facet-manager>
-</atomic-layout-section>
 
-        <atomic-layout-section section="main">
-          <atomic-layout-section section="status">
-            <atomic-sort-dropdown>
-  <atomic-sort-expression
-    label="Best Match"
-    expression="relevancy">
-  </atomic-sort-expression>
+          <!-- =================================================
+               SEARCH
+          ================================================== -->
+          <atomic-layout-section section="search">
 
-  <atomic-sort-expression
-    label="A-Z"
-    expression="title ascending">
-  </atomic-sort-expression>
+            <div class="search-heading">
+              <span class="search-kicker">
+                DISCOVER YOUR POKÉMON
+              </span>
 
-  <atomic-sort-expression
-    label="Z-A"
-    expression="title descending">
-  </atomic-sort-expression>
-</atomic-sort-dropdown>
-            <atomic-breadbox></atomic-breadbox>
-            <atomic-query-summary></atomic-query-summary>
-            <atomic-sort-dropdown>
-              <atomic-sort-expression
-                label="Relevance"
-                expression="relevancy"
-              ></atomic-sort-expression>
-              <atomic-sort-expression
-                label="Newest"
-                expression="date descending"
-              ></atomic-sort-expression>
-              <atomic-sort-expression
-                label="Oldest"
-                expression="date ascending"
-              ></atomic-sort-expression>
-            </atomic-sort-dropdown>
+              <h2>
+                Who are you looking for?
+              </h2>
+            </div>
+
+
+            <atomic-search-box>
+
+              <atomic-search-box-recent-queries>
+              </atomic-search-box-recent-queries>
+
+              <atomic-search-box-query-suggestions>
+              </atomic-search-box-query-suggestions>
+
+
+              <!-- INSTANT RESULTS -->
+              <atomic-search-box-instant-results
+                image-size="small"
+              >
+
+                <atomic-result-template>
+                  <template>
+
+                    <atomic-result-section-visual
+                      image-size="small"
+                    >
+                      <atomic-result-image
+                        field="pokemon_image"
+                        aria-hidden="true"
+                      >
+                      </atomic-result-image>
+                    </atomic-result-section-visual>
+
+
+                    <atomic-result-section-title>
+                      <atomic-result-link>
+                      </atomic-result-link>
+                    </atomic-result-section-title>
+
+
+                    <atomic-result-section-bottom-metadata>
+
+                      <div class="pokemon-meta">
+
+                        <div class="pokemon-pill type-pill">
+                          <span class="pill-label">
+                            Type
+                          </span>
+
+                          <atomic-result-multi-value-text
+                            field="pokemon_type"
+                          >
+                          </atomic-result-multi-value-text>
+                        </div>
+
+
+                        <div class="pokemon-pill generation-pill">
+                          <span class="pill-label">
+                            Gen
+                          </span>
+
+                          <atomic-result-number
+                            field="pokemon_generation"
+                          >
+                          </atomic-result-number>
+                        </div>
+
+                      </div>
+
+                    </atomic-result-section-bottom-metadata>
+
+                  </template>
+                </atomic-result-template>
+
+              </atomic-search-box-instant-results>
+
+            </atomic-search-box>
+
           </atomic-layout-section>
 
-          <atomic-layout-section section="results">
-            <atomic-result-list>
-              <atomic-result-template>
-  <template>
 
-    <atomic-result-section-visual image-size="small">
-      <atomic-result-image
-        field="pokemon_image"
-        aria-hidden="true">
-      </atomic-result-image>
-    </atomic-result-section-visual>
 
-    <atomic-result-section-title>
-      <atomic-result-link></atomic-result-link>
-    </atomic-result-section-title>
+          <!-- =================================================
+               FACETS
+          ================================================== -->
+          <atomic-layout-section section="facets">
 
-    <atomic-result-section-excerpt>
-      <atomic-result-text field="excerpt"></atomic-result-text>
-    </atomic-result-section-excerpt>
+            <div class="filter-heading">
 
-  </template>
-</atomic-result-template>
-            </atomic-result-list>
+              <div class="filter-icon">
+                ⌁
+              </div>
+
+              <div>
+                <span class="filter-kicker">
+                  REFINE
+                </span>
+
+                <h2>
+                  Explore the Pokédex
+                </h2>
+
+                <p>
+                  Filter Pokémon by type and generation.
+                </p>
+              </div>
+
+            </div>
+
+
+            <atomic-facet-manager>
+
+
+              <!-- TYPE -->
+              <atomic-facet
+                field="pokemon_type"
+                label="Type"
+              >
+              </atomic-facet>
+
+
+              <!-- GENERATION -->
+              <atomic-numeric-facet
+                field="pokemon_generation"
+                label="Generation"
+              >
+
+                <atomic-numeric-range
+                  start="0.5"
+                  end="1.5"
+                  label="Generation 1"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="1.5"
+                  end="2.5"
+                  label="Generation 2"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="2.5"
+                  end="3.5"
+                  label="Generation 3"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="3.5"
+                  end="4.5"
+                  label="Generation 4"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="4.5"
+                  end="5.5"
+                  label="Generation 5"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="5.5"
+                  end="6.5"
+                  label="Generation 6"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="6.5"
+                  end="7.5"
+                  label="Generation 7"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="7.5"
+                  end="8.5"
+                  label="Generation 8"
+                >
+                </atomic-numeric-range>
+
+                <atomic-numeric-range
+                  start="8.5"
+                  end="9.5"
+                  label="Generation 9"
+                >
+                </atomic-numeric-range>
+
+              </atomic-numeric-facet>
+
+
+            </atomic-facet-manager>
+
           </atomic-layout-section>
 
-          <atomic-layout-section section="pagination">
-            <atomic-pager></atomic-pager>
-          </atomic-layout-section>
-        </atomic-layout-section>
-      </atomic-search-layout>
-   <atomic-search-interface
-  fields-to-include='["pokemon_image","pokemon_type","pokemon_generation"]'
->
 
-    <script type="module" src="/src/main.js"></script>
+
+          <!-- =================================================
+               MAIN
+          ================================================== -->
+          <atomic-layout-section section="main">
+
+
+            <!-- STATUS / SORTING -->
+            <atomic-layout-section section="status">
+
+              <atomic-breadbox>
+              </atomic-breadbox>
+
+              <atomic-query-summary>
+              </atomic-query-summary>
+
+
+              <atomic-sort-dropdown>
+
+                <atomic-sort-expression
+                  label="Best Match"
+                  expression="relevancy"
+                >
+                </atomic-sort-expression>
+
+                <atomic-sort-expression
+                  label="A–Z"
+                  expression="title ascending"
+                >
+                </atomic-sort-expression>
+
+                <atomic-sort-expression
+                  label="Z–A"
+                  expression="title descending"
+                >
+                </atomic-sort-expression>
+
+              </atomic-sort-dropdown>
+
+            </atomic-layout-section>
+
+
+
+            <!-- =================================================
+                 RESULTS
+            ================================================== -->
+            <atomic-layout-section section="results">
+
+              <atomic-result-list
+                display="grid"
+                density="comfortable"
+                image-size="large"
+              >
+
+                <atomic-result-template>
+                  <template>
+
+
+                    <!-- IMAGE -->
+                    <atomic-result-section-visual>
+
+                      <atomic-result-image
+                        field="pokemon_image"
+                        aria-hidden="true"
+                      >
+                      </atomic-result-image>
+
+                    </atomic-result-section-visual>
+
+
+
+                    <!-- TITLE -->
+                    <atomic-result-section-title>
+
+                      <atomic-result-link>
+                      </atomic-result-link>
+
+                    </atomic-result-section-title>
+
+
+
+                    <!-- TYPE + GENERATION -->
+                    <atomic-result-section-bottom-metadata>
+
+                      <div class="pokemon-meta">
+
+
+                        <div class="pokemon-pill type-pill">
+
+                          <span class="pill-label">
+                            Type
+                          </span>
+
+                          <atomic-result-multi-value-text
+                            field="pokemon_type"
+                          >
+                          </atomic-result-multi-value-text>
+
+                        </div>
+
+
+                        <div class="pokemon-pill generation-pill">
+
+                          <span class="pill-label">
+                            Generation
+                          </span>
+
+                          <atomic-result-number
+                            field="pokemon_generation"
+                          >
+                          </atomic-result-number>
+
+                        </div>
+
+
+                      </div>
+
+                    </atomic-result-section-bottom-metadata>
+
+
+
+                    <!-- EXCERPT -->
+                    <atomic-result-section-excerpt>
+
+                      <atomic-result-text
+                        field="excerpt"
+                      >
+                      </atomic-result-text>
+
+                    </atomic-result-section-excerpt>
+
+
+                  </template>
+                </atomic-result-template>
+
+              </atomic-result-list>
+
+            </atomic-layout-section>
+
+
+
+            <!-- PAGINATION -->
+            <atomic-layout-section section="pagination">
+
+              <atomic-pager>
+              </atomic-pager>
+
+            </atomic-layout-section>
+
+
+          </atomic-layout-section>
+
+        </atomic-search-layout>
+
+      </atomic-search-interface>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+    <footer class="app-footer">
+
+      <span>Pokédex Discovery</span>
+
+      <span class="footer-dot">•</span>
+
+      <span>Powered by Coveo</span>
+
+      <span class="footer-dot">•</span>
+
+      <span>Technical Challenge</span>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         APPLICATION
+    ====================================================== -->
+    <script
+      type="module"
+      src="/src/main.js"
+    >
+    </script>
+
   </body>
 </html>

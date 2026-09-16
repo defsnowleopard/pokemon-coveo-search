@@ -1,0 +1,22 @@
+{
+  "name": "pokemon-coveo-search",
+  "version": "0.1.0",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@coveo/atomic": "3.61.3",
+    "@coveo/headless": "3.56.0"
+  },
+  "devDependencies": {
+    "publint": "0.3.24",
+    "vite": "8.2.2"
+  },
+  "scripts": {
+    "publint": "pnpm run prepack && publint publish --pack=false",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}

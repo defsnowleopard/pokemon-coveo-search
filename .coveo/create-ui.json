@@ -1,0 +1,12 @@
+{
+  "template": "atomic-search",
+  "templateVersion": "3.61.3",
+  "createdWith": "create-ui@0.3.1",
+  "createdOn": "2026-09-16T10:00:14.255Z",
+  "dependencies": {
+    "@coveo/atomic": "3.61.3",
+    "@coveo/headless": "3.56.0"
+  },
+  "node": "24.21.0",
+  "packageManager": "npm"
+}
